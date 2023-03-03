@@ -1,13 +1,8 @@
-import { randomUUID } from "crypto";
-
 export interface ITimerEvent {
   left: number;
 }
 
-// type TimerCallback = (event: ITimerEvent) => void;
-
 export interface ITimerJSON extends ITimerEvent {
-  readonly id: string;
   readonly duration: number;
   readonly startedAt?: number;
   readonly pausedAt?: number;
@@ -21,13 +16,14 @@ export interface ITimer extends ITimerJSON {
   pause: () => void;
   update: () => void;
   resume: () => void;
+  presentation: () => string;
 }
 
 class Timer implements ITimer {
   static toJSON = (timer: ITimer) => {
-    const { id, duration, startedAt, pausedAt, endedAt, stale, left, lastUpdatedAt } = timer;
+    const { duration, startedAt, pausedAt, endedAt, stale, left, lastUpdatedAt } = timer;
     const timerJSON: ITimerJSON = {
-      id,
+      // id,
       duration,
       startedAt,
       pausedAt,
@@ -40,9 +36,8 @@ class Timer implements ITimer {
   };
 
   static fromJSON = (timerJSON: ITimerJSON) => {
-    const { id, duration, startedAt, pausedAt, endedAt, stale, left, lastUpdatedAt } = timerJSON;
+    const { duration, startedAt, pausedAt, endedAt, stale, left, lastUpdatedAt } = timerJSON;
     const timer = new Timer(duration);
-    timer.id = id;
     timer.startedAt = startedAt;
     timer.pausedAt = pausedAt;
     timer.endedAt = endedAt;
@@ -61,12 +56,10 @@ class Timer implements ITimer {
     return timer;
   };
 
-  public id = randomUUID();
   public startedAt?: number;
   public pausedAt?: number;
   public endedAt?: number;
   public lastUpdatedAt?: number;
-  // public resumedAt?: number;
   public duration = 0;
   public stale = false;
   public left = 0;
@@ -80,7 +73,6 @@ class Timer implements ITimer {
     if (!this.endedAt && !this.startedAt) {
       const now = Date.now();
       this.startedAt = now;
-      // this.resumedAt = now;
     }
   };
 
@@ -103,10 +95,24 @@ class Timer implements ITimer {
     if (!this.pausedAt && !this.endedAt && this.startedAt) {
       const now = Date.now();
       const timeFlown = now - (this.lastUpdatedAt || this.startedAt);
-      console.log(timeFlown / 1000, this.lastUpdatedAt, this.startedAt);
-      this.left = this.left - timeFlown;
+      // console.log(timeFlown / 1000, this.lastUpdatedAt, this.startedAt);
+      const timeLeft = this.left - timeFlown;
+      this.left = timeLeft > 0 ? timeLeft : 0;
+      if (this.left === 0) {
+        this.endedAt = now;
+        delete this.pausedAt;
+      }
       this.lastUpdatedAt = now;
     }
+  };
+
+  public presentation = () => {
+    if (this.left === 0) {
+      return "00:00";
+    }
+    const minutes = Math.floor(this.left / (60 * 1000));
+    const seconds = +(this.left / 1000 - minutes * 60).toFixed(0);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 }
 

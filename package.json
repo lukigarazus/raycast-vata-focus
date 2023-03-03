@@ -3,7 +3,7 @@
   "name": "vata-focus",
   "title": "vata-focus",
   "description": "This extension provides a simple work and focus system for people with Vata-type personality",
-  "icon": "command-icon.png",
+  "icon": "logo-color.png",
   "author": "lukigarazus",
   "categories": [
     "Productivity"
@@ -11,11 +11,33 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "index",
-      "title": "Vata Productivity",
-      "description": "Show Vata Productivity extension in menu bar",
+      "name": "vata-menu-bar-pomodoro",
+      "title": "Pomodoro Menu Bar",
+      "subtitle": "Show timers in menu-bar",
+      "description": "Start, pause, stop or continue pomodoro intervals",
       "mode": "menu-bar",
       "interval": "10s"
+    },
+    {
+      "name": "vata-view-pomodoro",
+      "title": "Pomodoro Timer",
+      "subtitle": "Start / Stop Pomodoro Timer",
+      "description": "Start, pause, stop or continue pomodoro intervals",
+      "mode": "view"
+    },
+    {
+      "name": "vata-view-projects",
+      "title": "Projects",
+      "subtitle": "Create / Edit Projects",
+      "description": "Create, edit or delete projects and select the main project",
+      "mode": "view"
+    },
+    {
+      "name": "vata-menu-bar-projects",
+      "title": "Main Vata Project",
+      "subtitle": "Show the main project",
+      "description": "Select the main vata project to be displayed in the menu bar",
+      "mode": "menu-bar"
     }
   ],
   "dependencies": {
